@@ -115,3 +115,81 @@ Symbolic Link (Soft Link)
 - 원본이 삭제되면 링크는 끊어짐
 - 윈도우의 "바로가기"와 비슷한 개념
 
+
+## 3주차 수업
+
+◦ Route / Routing / Routes
+
+Route: 경로를 의미하며, 특정 URL과 컴포넌트를 연결하는 역할을 한다.
+Routing: 사용자가 요청한 URL에 따라 해당 URL에 맞는 페이지를 보여주는 과정이다.
+Routes: 여러 개의 Route를 묶어주는 역할을 하며, 기존의 switch와 같은 기능을 한다.
+Routes를 사용하지 않고 Route만 나열하면 조건에 맞는 모든 Route가 렌더링된다.
+
+실제 화면 전환의 핵심 역할은 Route가 담당한다.
+
+◦ Router
+리액트는 SPA (Single Page Application) 구조를 기반으로 하며, 하나의 index.html에서 여러 화면을 전환한다.
+이러한 화면 전환을 담당하는 것이 **라우팅 (Routing)**이며, 이를 쉽게 도와주는 라이브러리가 React Router이다.
+
+React Router 설치
+
+npm install react-router-dom
+
+설치 후 package.json의 dependencies에 react-router-dom이 추가된다.
+
+◦ 라우터 기본 설정
+라우터를 사용하려면 프로젝트 최상위 컴포넌트를 BrowserRouter로 감싸야 한다.
+
+// main.jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
+
+
+◦ 라우팅 구현하기
+페이지 이동은 Routes와 Route 컴포넌트를 사용한다.
+
+// App.jsx
+import { Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
+
+function App() {
+  return (
+    <div>
+      <nav>
+        <Link to="/">홈</Link>
+        <Link to="/about">소개</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;
+
+
+◦ 주요 기능
+
+<Link>: a 태그와 비슷하지만 새로고침 없이 컴포넌트 전환이 가능하다.
+중첩 라우트 (Nested Routes): 하나의 페이지 안에서 하위 라우트를 구성할 수 있다.
+useParams(): URL 파라미터를 가져올 수 있다. (예: /user/:id)
+useNavigate(): 코드로 페이지 이동을 제어할 수 있다.
+
+◦ 정리
+
+React Router는 SPA 환경에서 화면 전환을 담당한다.
+BrowserRouter → 프로젝트에 라우팅 기능을 부여한다.
+Routes & Route → 경로에 따른 컴포넌트 매핑을 처리한다.
+Link, useNavigate, useParams 등 다양한 기능을 통해 유연한 화면 전환이 가능하다.
