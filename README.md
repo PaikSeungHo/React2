@@ -120,16 +120,16 @@ Symbolic Link (Soft Link)
 
 ◦ Route / Routing / Routes
 
-Route: 경로를 의미하며, 특정 URL과 컴포넌트를 연결하는 역할을 한다.
-Routing: 사용자가 요청한 URL에 따라 해당 URL에 맞는 페이지를 보여주는 과정이다.
-Routes: 여러 개의 Route를 묶어주는 역할을 하며, 기존의 switch와 같은 기능을 한다.
-Routes를 사용하지 않고 Route만 나열하면 조건에 맞는 모든 Route가 렌더링된다.
+- Route: 경로를 의미하며, 특정 URL과 컴포넌트를 연결하는 역할을 한다.
+- Routing: 사용자가 요청한 URL에 따라 해당 URL에 맞는 페이지를 보여주는 과정이다.
+- Routes: 여러 개의 Route를 묶어주는 역할을 하며, 기존의 switch와 같은 기능을 한다.
+- Routes를 사용하지 않고 Route만 나열하면 조건에 맞는 모든 Route가 렌더링된다.
 
 실제 화면 전환의 핵심 역할은 Route가 담당한다.
 
 ◦ Router
-리액트는 SPA (Single Page Application) 구조를 기반으로 하며, 하나의 index.html에서 여러 화면을 전환한다.
-이러한 화면 전환을 담당하는 것이 **라우팅 (Routing)**이며, 이를 쉽게 도와주는 라이브러리가 React Router이다.
+- 리액트는 SPA (Single Page Application) 구조를 기반으로 하며, 하나의 index.html에서 여러 화면을 전환한다.
+- 이러한 화면 전환을 담당하는 것이 **라우팅 (Routing)**이며, 이를 쉽게 도와주는 라이브러리가 React Router이다.
 
 React Router 설치
 
@@ -141,6 +141,7 @@ npm install react-router-dom
 라우터를 사용하려면 프로젝트 최상위 컴포넌트를 BrowserRouter로 감싸야 한다.
 
 // main.jsx
+```
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -151,12 +152,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <App />
   </BrowserRouter>
 );
-
+```
 
 ◦ 라우팅 구현하기
 페이지 이동은 Routes와 Route 컴포넌트를 사용한다.
 
 // App.jsx
+```
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -177,19 +179,151 @@ function App() {
   );
 }
 
-export default App;
 
+export default App;
+```
 
 ◦ 주요 기능
 
-<Link>: a 태그와 비슷하지만 새로고침 없이 컴포넌트 전환이 가능하다.
-중첩 라우트 (Nested Routes): 하나의 페이지 안에서 하위 라우트를 구성할 수 있다.
-useParams(): URL 파라미터를 가져올 수 있다. (예: /user/:id)
-useNavigate(): 코드로 페이지 이동을 제어할 수 있다.
+- <Link>: a 태그와 비슷하지만 새로고침 없이 컴포넌트 전환이 가능하다.
+- 중첩 라우트 (Nested Routes): 하나의 페이지 안에서 하위 라우트를 구성할 수 있다.
+- useParams(): URL 파라미터를 가져올 수 있다. (예: /user/:id)
+- useNavigate(): 코드로 페이지 이동을 제어할 수 있다.
 
 ◦ 정리
 
-React Router는 SPA 환경에서 화면 전환을 담당한다.
-BrowserRouter → 프로젝트에 라우팅 기능을 부여한다.
-Routes & Route → 경로에 따른 컴포넌트 매핑을 처리한다.
-Link, useNavigate, useParams 등 다양한 기능을 통해 유연한 화면 전환이 가능하다.
+- React Router는 SPA 환경에서 화면 전환을 담당한다.
+- BrowserRouter → 프로젝트에 라우팅 기능을 부여한다.
+- Routes & Route → 경로에 따른 컴포넌트 매핑을 처리한다.
+- Link, useNavigate, useParams 등 다양한 기능을 통해 유연한 화면 전환이 가능하다.
+
+
+## 4주차 수업
+
+Git: checkout vs switch
+
+- 과거에는 git checkout 하나로 브랜치 이동, 브랜치 생성, 커밋 이동까지 모두 처리했으나 기능이 많아 혼란을 주었다.
+
+브랜치 이동
+
+git checkout feature/login
+git switch feature/login
+
+
+브랜치 생성 + 이동
+
+git checkout -b feature/signup
+git switch -c feature/signup
+
+
+특정 커밋으로 이동
+
+git checkout <commit-id>
+
+
+특징
+
+- checkout은 다기능이지만 복잡하고 실수 위험이 있음
+- switch는 브랜치 전용 명령어라 더 직관적이고 안전함
+- 최신 Git 환경에서는 switch 사용을 권장
+- branch 명령어는 브랜치 생성·삭제·확인 전용
+
+◦ Layout (레이아웃)
+
+- 웹사이트는 공통적으로 반복되는 구조(헤더, 사이드바, 푸터 등)가 있다.
+
+- React에서는 이 구조를 레이아웃 컴포넌트로 만들고 각 페이지를 그 안에 넣어 재사용한다.
+
+예시 구조:
+
+Header
+ └─ Main Content (변경되는 부분)
+Footer
+
+// Layout.jsx
+```
+import Header from "./Header";
+import Footer from "./Footer";
+
+function Layout({ children }) {
+  return (
+    <div>
+      <Header />
+      <main style={{ minHeight: "80vh" }}>
+        {children} {/* 페이지별 내용 */}
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export default Layout;
+```
+
+◦ 라우터와 함께 사용하기
+공통 레이아웃을 Route에 적용하여 페이지를 감싼다.
+
+// App.jsx
+```
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import About from "./pages/About";
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default App;
+```
+
+◦ Outlet 사용 예시
+Outlet은 라우터에서 지정된 페이지를 레이아웃 안에 삽입한다.
+
+// Layout.jsx
+```
+import { Outlet } from "react-router-dom";
+import Header from "./Header";
+import Footer from "./Footer";
+
+function Layout() {
+  return (
+    <div>
+      <Header />
+      <main>
+        <Outlet /> {/* 라우터에서 지정된 페이지 */}
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export default Layout;
+```
+
+◦ 스타일링 방법
+
+- CSS 모듈: Layout.module.css로 분리
+- Styled-components: JS 안에서 스타일 정의
+- Tailwind CSS: 클래스명으로 빠르게 레이아웃 구성
+
+◦ 레이아웃 정리
+
+- 레이아웃은 공통 구조(헤더, 푸터, 사이드바)를 관리하는 컴포넌트
+- children 또는 Outlet을 활용해 페이지를 삽입
+- 반복되는 코드를 줄이고 유지보수를 쉽게 만든다
+- 루트 레이아웃은 필수이며 html 및 body 태그를 포함해야 한다
+- 중첩 라우트는 다중 URL 세그먼트로 구성된다
+
+◦ Slug의 이해
+
+- Slug는 URL이나 데이터에서 고유 식별자 역할을 한다.
+- 데이터 소스가 크다면 단순 .find는 시간 복잡도 **O(n)**이므로 비효율적 → DB 쿼리로 대체하는 것이 좋다.
+- O(n): 입력 데이터 크기 n에 비례하여 실행 시간이 선형적으로 증가한다는 의미.
