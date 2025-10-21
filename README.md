@@ -327,3 +327,152 @@ export default Layout;
 - Slug는 URL이나 데이터에서 고유 식별자 역할을 한다.
 - 데이터 소스가 크다면 단순 .find는 시간 복잡도 **O(n)**이므로 비효율적 → DB 쿼리로 대체하는 것이 좋다.
 - O(n): 입력 데이터 크기 n에 비례하여 실행 시간이 선형적으로 증가한다는 의미.
+
+
+## 5주차 수업
+
+CSS 스타일링 방법
+◦ CSS 모듈
+
+- Layout.module.css처럼 파일명을 지어 스타일을 분리합니다.
+- -> 클래스명이 고유해져서 스타일 충돌을 방지할 수 있습니다.
+
+◦ Styled-components
+
+- JS 파일 안에서 컴포넌트 단위로 스타일을 바로 정의하는 방식입니다. (CSS-in-JS)
+
+◦ Tailwind CSS
+
+- flex, p-4, text-blue-500 같은 미리 정의된 유틸리티 클래스명을 사용합니다.
+- -> HTML/JSX 내에서 빠르고 간편하게 레이아웃을 구성할 수 있습니다.
+
+레이아웃(Layout) 정리
+◦ 레이아웃이란?
+
+- -> 여러 페이지에서 공통적으로 사용되는 구조(헤더, 푸터, 사이드바 등)를 관리하는 컴포넌트입니다.
+
+◦ 페이지 삽입 방식
+
+- -> children 프롭(Props)이나 Outlet(React Router)을 활용해 실제 페이지 콘텐츠를 삽입합니다.
+
+◦ 장점
+
+- -> 반복되는 코드를 줄여서 유지보수성을 높입니다.
+
+◦ 루트 레이아웃 (App Router 기준)
+
+- -> 모든 페이지를 감싸는 최상위 레이아웃으로, <html>과 <body> 태그를 반드시 포함해야 합니다.
+
+◦ 중첩 라우트 (Nested Routes)
+
+- -> /dashboard/settings처럼 여러 URL 세그먼트(조각)로 구성된 경로 구조를 의미합니다.
+
+
+Slug의 이해
+◦ Slug란?
+- -> URL이나 데이터에서 고유 식별자 역할을 하는 값입니다.
+- -> (예: .../posts/my-first-post 에서 my-first-post 부분)
+
+◦ 성능과 O(n)
+
+- 데이터 소스(배열 등)가 클 때, 단순 .find() 메서드로 데이터를 찾는 것은 비효율적일 수 있습니다.
+- -> 시간 복잡도 $O(n)$: 입력 데이터 크기(n)에 비례하여 실행 시간이 선형적으로 증가한다는 의미입니다. (데이터 1000개면 최대 1000번 비교)
+- -> 개선: 이런 경우, DB 쿼리(인덱싱 활용) 등으로 대체하여 $O(n)$보다 효율적으로 데이터를 찾는 것이 좋습니다.
+
+
+
+## 6주차 수업
+
+Client-side Transitions (클라이언트 측 전환)
+
+◦ 기존 서버 렌더링의 문제점
+
+- 페이지 이동 시, 브라우저가 **전체 페이지를 새로 로드(Full Page Load)**합니다.
+- 이로 인해 기존 페이지의 **클라이언트 상태(state)**가 모두 삭제됩니다.
+- 스크롤 위치가 항상 맨 위로 재설정됩니다.
+- 페이지를 로드하는 동안 사용자의 다른 상호작용이 잠시 차단됩니다.
+
+◦ Next.js의 <Link> 컴포넌트
+
+- Next.js는 <Link> 컴포넌트를 통해 클라이언트 측 전환을 제공하여 이 문제를 방지합니다.
+- 페이지 이동 시, 내비게이션 바나 푸터 같은 공유 레이아웃과 UI를 그대로 유지시킵니다.
+- 변경되는 부분만 새로 가져와 교체하므로 SPA(싱글 페이지 앱)처럼 부드러운 경험을 제공합니다.
+
+◦ 성능 (Prefetching)
+
+- Next.js는 <Link>가 가리키는 페이지를 미리 가져와(prefetching) 로딩을 대비합니다.
+- 프리페칭, 스트리밍 기능과 함께 사용하면 동적 경로에서도 매우 빠른 페이지 전환이 가능합니다.
+
+
+generateStaticParams
+
+◦ 역할
+- Next.js의 동적 라우트([slug])에서 빌드 시점에 미리 생성해 둘 페이지(HTML) 목록을 알려주는 함수입니다.
+
+
+◦ 작동 방식
+- export async function generateStaticParams()로 함수를 export하면, Next.js가 빌드 시점에 이 함수를 호출합니다.
+- 함수는 [{ slug: '1' }, { slug: '2' }]와 같이 경로 파라미터(slug) 객체들의 배열을 반환해야 합니다.
+
+// data.jsx
+```
+export const posts = [
+  { id: "1", title: "첫 번째 글", content: "내용 1" },
+  { id: "2", title: "두 번째 글", content: "내용 2" }];
+
+```
+
+// page.jsx
+```
+import { posts } from "./data";
+
+interface BlogPageProps {
+  params: { slug: string };
+}
+
+export async function generateStaticParams() {
+  return posts.map(post => ({
+    slug: post.id,
+  }));
+}
+
+export default function BlogPage({ params }: BlogPageProps) {
+  const post = posts.find(p => p.id === params.slug);
+
+  if (!post) return <p>글을 찾을 수 없습니다.</p>;
+
+  return (
+    <div>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </div>
+  );
+}
+
+```
+
+## 7주차 수업
+
+### 시험
+
+## 8주차 수업
+
+### 병결
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
