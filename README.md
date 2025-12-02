@@ -1,6 +1,112 @@
 # React2
 
+## 14주차 수업
+배포 및 최적화 (Optimization)
+1. 개발 vs 프로덕션 환경
+개발 환경(`next dev`)과 배포 환경(`next build`)은 CSS 처리 방식에서 차이가 있습니다.
+
+- **개발 중 (next dev)**: `Fast Refresh` 기능을 위해 자바스크립트가 필요하며, CSS 업데이트가 즉시 반영됩니다.
+- **프로덕션 (next build)**:
+    - 모든 CSS 파일이 압축(minify) 및 코드 분할되어 로드됩니다.
+    - 각 경로에 필요한 최소한의 CSS만 로드하여 성능을 최적화합니다.
+    - 자바스크립트가 비활성화된 환경에서도 CSS가 정상적으로 로드됩니다.
+- **주의사항**: 개발 환경에서는 CSS 로드 순서가 달라질 수 있으므로, 최종 스타일은 항상 빌드(`next build`) 후 확인해야 합니다.
+
+
+2. 이미지 최적화 (Image Optimization)
+Next.js의 `<Image>` 컴포넌트를 사용하여 성능을 개선합니다.
+
+- **주요 기능**:
+    - **크기 최적화**: 디바이스에 맞는 적절한 크기의 이미지를 자동 제공 (WebP 등).
+    - **CLS 방지**: 이미지 로딩 시 레이아웃이 밀리는 현상(Layout Shift) 방지.
+    - **Lazy Loading**: 뷰포트에 들어올 때만 이미지를 로드하여 초기 속도 향상.
+
+- **Import vs Public 이미지**:
+    - **Import 방식 (권장)**: 빌드 타임에 크기를 알 수 있어 `width/height` 생략 가능 및 자동 최적화 적용.
+    - **Public 폴더**: `/파일명`으로 접근하며, `width/height` 지정 필수.
+
+
+```
+import Image from "next/image";
+import examplePic from "./example.png";
+
+export default function Page() {
+  return (
+    <Image
+      src={examplePic}
+      alt="설명"
+      placeholder="blur"
+    />
+  );
+}
+```
+- WebP 형식: JPEG, PNG 대비 파일 크기가 작고 압축률이 높으며, 투명도와 애니메이션을 지원하여 웹 성능을 높여줍니다.
+
+3. 폰트 최적화 (next/font)
+Next.js 13 이상에서 제공하는 폰트 최적화 기능을 사용합니다.
+
+특징:
+
+- 폰트 파일을 정적 자산으로 변환하여 자체 호스팅(Google 서버 요청 X).
+- 폰트 로딩으로 인한 레이아웃 이동(CLS) 방지.
+
+```
+import { Noto_Sans_KR } from "next/font/google";
+
+const noto = Noto_Sans_KR({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="ko" className={noto.className}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+4. 배포 (Deployment)
+Node.js: package.json 스크립트(build, start)를 사용해 서버 실행.
+
+Docker: 공식 Docker 이미지 지원으로 컨테이너 배포 용이.
+
+Vercel: Next.js 개발사가 만든 플랫폼으로, Git과 연동 시 자동 배포(CI/CD) 및 글로벌 CDN이 기본 제공됨.
+
+
 ## 13주차 수업
+◦ Global(전역) CSS
+
+- 전역 CSS를 사용하여 응용 프로그램 전체에 스타일을 적용할 수 있습니다.
+
+- app/global.css 파일을 만들고 루트 레이아웃으로 가져와 애플리케이션의 모든 경로에 스타일을 적용합니다.
+
+// app/global.css
+```
+body {
+  padding: 20px 20px 60px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+```
+
+// app/layout.tsx
+```
+// These styles apply to every route in the application
+import './global.css'
+
+export default function Rootlayout({
+  children,
+}: {
+  children: React.REactNode
+}) {
+  return (
+    <html lang="en">
+    <body>{children}</body>
+    </html>
+  )
+}
 
 
 ## 12주차 수업
